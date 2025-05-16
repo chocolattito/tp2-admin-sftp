@@ -1,29 +1,43 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, session
 from main import ConexionSFTP
 
-
 app = Flask(__name__)
+app.secret_key = "clave_super_secreta"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    archivos=["archivo1.txt", "archivo2.txt", "archivo3.txt"]
-    if request.method == 'POST':
-        return redirect(url_for('listar_archivos', listaDeArchivos=archivos))
-    else:
-        return render_template('index.html')
+    archivos = ["archivo1.txt", "archivo2.txt", "archivo3.txt"]
+    if request.method == 'POST':        # Guardamos la lista de archivos en la sesión
+        session['archivos'] = archivos
+        return redirect(url_for('listar_archivos'))
+    return render_template('index.html')
 
-@app.route('/enviar_archivo', methods=['POST'])
+@app.route('/enviar_archivo', methods=['GET', 'POST'])
 def enviar_archivo():
-    conexion = ConexionSFTP('192.168.1.10', 'Usuario', '123456')
-    conexion.enviar_archivo('C:/Users/Usuario/Desktop/shockie/sftp-implementacion/archivo.txt')
-    return 'Archivo enviado'
+    if request.method == 'POST':
+        pass  # lógica de envío aquí
+    return render_template('enviar_archivo.html')  # ¡Faltaba return!
 
 @app.route('/listar_archivos', methods=['GET', 'POST'])
 def listar_archivos():
-    if request.method == "GET":
-        return redirect(url_for('index'))
-    else:
-        render_template('listar_archivos.html')
+    archivos = session.get('archivos', [])
+    if request.method == 'POST':
+        pass
+    return render_template('listar_archivos.html', archivos=archivos)
+
+@app.route('/descargar_archivo', methods=['GET', 'POST'])
+def descargar_archivo():
+    if request.method == 'POST':
+        pass
+
+    return render_template('descarga.html')
+
+@app.route('/borrar_archivo', methods=['GET', 'POST'])
+def borrar_archivo():
+    if request.method == 'POST':
+        pass
+  
+    return render_template('borrar.html')
 
 if __name__ == "__main__":
     app.run(debug=True)

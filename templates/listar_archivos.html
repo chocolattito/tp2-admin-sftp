@@ -9,13 +9,10 @@
 <body>
     <h1>Listar archivos</h1>
     <ul>
-        {% for archivo in listaDeArchivos %}
+        {% for archivo in archivos %}
             <li>{{ archivo }}</li>
         {% endfor %}
     </ul>
-    <form action="/enviar_archivo" method="post">
-        <input type="file" name="archivo" value="Subir archivo">
-        <input type="submit" value="Enviar archivo">
-    </form>
+
 </body>
 </html>

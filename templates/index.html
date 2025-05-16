@@ -7,8 +7,19 @@
     <title>Implementacion SFTP</title>
 </head>
 <body>
+    
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Inicio</a></li>
+            <li><a href="{{ url_for('enviar_archivo') }}">Enviar archivo</a></li>
+            <li><a href="{{ url_for('listar_archivos') }}">Listar archivos</a></li>
+            <li><a href="{{ url_for('descargar_archivo') }}">Descargar archivo</a></li>
+            <li><a href="{{ url_for('borrar_archivo') }}">Borrar archivo</a></li>
+        </ul>
+    </nav>
+
     <h1>Transferir archivo</h1>
-    <form action="/enviar_archivo" method="post">
+    <form action="" method="post">
         <input type="file" name="archivo" value="Subir archivo">
         <input type="submit" value="Enviar archivo">
     </form>
