@@ -7,7 +7,12 @@
     <title>Implementacion SFTP</title>
 </head>
 <body>
-    <h1>Transferir archivo</h1>
+    <h1>Listar archivos</h1>
+    <ul>
+        {% for archivo in listaDeArchivos %}
+            <li>{{ archivo }}</li>
+        {% endfor %}
+    </ul>
     <form action="/enviar_archivo" method="post">
         <input type="file" name="archivo" value="Subir archivo">
         <input type="submit" value="Enviar archivo">
