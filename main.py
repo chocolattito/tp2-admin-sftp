@@ -41,7 +41,7 @@ class ConexionSFTP:
         arch_local = directorio_local
         arch_remoto = (self.__DIRECTORY + "/archivotest")
         self.__SFTP_CLIENT.get(arch_remoto, arch_local)
-
+                                                                                                                                                                                   
     def listar_archivos(self) -> list[str]:
         archivos = self.__SFTP_CLIENT.listdir(self.__DIRECTORY)
         return archivos
