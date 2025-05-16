@@ -1,17 +1,27 @@
+# pylint:disable=C0116,C0115,C0114,C0103
+
 import paramiko
 
 class ConexionSFTP:
     DEFAULT_PORT = 22
-    DEFAULT_DIRECTORY = 'C:/SFTPImplement'
+
+    DEFAULT_PATH_WINDOWS = '%homepath%/SFTPImplement/'
+    DEFAULT_PATH = '~/SFTPImplement/'
+    DEFAULT_SSH_WINDOWS = '%homepath%/.ssh/known_hosts'
+    DEFAULT_SSH = '~/.ssh/known_hosts'
+
+    # las variables de windows estan en desuso.
+    #FUFKCUFKCUFKCUFKC UFKC ODIO A MICROSOFT. EMPRESA DE MIERDDDAAaA
 
     def __init__(
             self, hostname: str, username: str, password: str,
-            port: int=DEFAULT_PORT, directory: str = DEFAULT_DIRECTORY):
+            port: int=DEFAULT_PORT
+    ):
         self.__HOSTNAME = hostname
         self.__PORT = port
         self.__USERNAME = username
         self.__PASSWORD = password
-        self.__DIRECTORY = directory
+        self.__detect_os()
 
         # clientes
         self.__SSH_CLIENT = self.__init_ssh_client()
@@ -21,9 +31,17 @@ class ConexionSFTP:
         self.__SFTP_CLIENT.close()
         self.__SSH_CLIENT.close()
 
+    def __detect_os(self) -> None:
+        _, stdout, _ = self.__SSH_CLIENT.exec_command('uname -s')
+        os_name = stdout.read().decode().strip()
+
+        if os_name == "Linux" or os_name == "Darwin":
+            self.__path = self.DEFAULT_PATH
+            self.__ssh = self.DEFAULT_SSH
+
     def __init_ssh_client(self) -> paramiko.SSHClient:
         ssh_client = paramiko.SSHClient()
-        ssh_client.load_system_host_keys(f'C:/Users/{self.__USERNAME}/.ssh/known_hosts')
+        ssh_client.load_system_host_keys(self.__ssh)
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh_client.connect(self.__HOSTNAME, self.__PORT, self.__USERNAME, self.__PASSWORD)
         return ssh_client
@@ -34,14 +52,14 @@ class ConexionSFTP:
 
     def enviar_archivo(self, directorio_arch: str) -> None:
         arch_local = directorio_arch
-        arch_remoto = (self.__DIRECTORY + "/archivotest")
+        arch_remoto = self.__path + "/archivotest"
         self.__SFTP_CLIENT.put(arch_local, arch_remoto)
 
     def descargar_archivo(self, directorio_local: str) -> None:
         arch_local = directorio_local
-        arch_remoto = (self.__DIRECTORY + "/archivotest")
+        arch_remoto = self.__path + "/archivotest"
         self.__SFTP_CLIENT.get(arch_remoto, arch_local)
-                                                                                                                                                                                   
+
     def listar_archivos(self) -> list[str]:
-        archivos = self.__SFTP_CLIENT.listdir(self.__DIRECTORY)
+        archivos = self.__SFTP_CLIENT.listdir(self.__path)
         return archivos
