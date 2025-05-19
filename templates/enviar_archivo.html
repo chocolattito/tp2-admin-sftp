@@ -7,5 +7,9 @@
 </head>
 <body>
     <h1>Enviar archivo</h1>
+    <form action="{{ url_for('enviar_archivo') }}" method="post" enctype="multipart/form-data">
+        <input type="file" name="archivo">
+        <input type="submit" value="Enviar">
+    </form>
 </body>
 </html>

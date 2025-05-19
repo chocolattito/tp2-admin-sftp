@@ -11,17 +11,40 @@
     <nav>
         <ul>
             <li><a href="{{ url_for('index') }}">Inicio</a></li>
-            <li><a href="{{ url_for('enviar_archivo') }}">Enviar archivo</a></li>
-            <li><a href="{{ url_for('listar_archivos') }}">Listar archivos</a></li>
-            <li><a href="{{ url_for('descargar_archivo') }}">Descargar archivo</a></li>
-            <li><a href="{{ url_for('borrar_archivo') }}">Borrar archivo</a></li>
         </ul>
     </nav>
-
-    <h1>Transferir archivo</h1>
-    <form action="" method="post">
-        <input type="file" name="archivo" value="Subir archivo">
-        <input type="submit" value="Enviar archivo">
+    
+    <h1>Establecer conexión</h1>    
+    <form action="{{ url_for('index') }}" method="post">
+        <label for="hostname">Hostname:</label>
+        <input type="text" id="hostname" name="hostname" required>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <input type="submit" value="Enviar">
     </form>
+
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+
+    {% if conexion %}
+        <h2>Datos de Conexión:</h2>
+        <ul>
+            <li>Hostname: {{ conexion.hostname }}</li>
+            <li>Usuario: {{ conexion.username }}</li>
+            <li>Contraseña: {{ conexion.password }}</li>
+        </ul>
+    {% endif %}
+    {% if conexion %}
+        <ul>
+            <li><a href="{{ url_for('enviar_archivo') }}">Enviar Archivo</a></li>
+            <li><a href="{{ url_for('listar_archivos') }}">Listar Archivos</a></li>
+            <li><a href="{{ url_for('descargar_archivo') }}">Descargar Archivo</a></li>
+            <li><a href="{{ url_for('borrar_archivo') }}">Borrar Archivo</a></li>
+            <li><a href="{{ url_for('desconectar') }}">Desconectar conexión</a></li>
+        </ul>
+    {% endif %}
 </body>
 </html>
