@@ -1,5 +1,6 @@
 # pylint:disable=C0116,C0115,C0114,C0103
 
+import re
 import paramiko
 
 class ConexionSFTP:
@@ -35,7 +36,7 @@ class ConexionSFTP:
         _, stdout, _ = self.__SSH_CLIENT.exec_command('uname -s')
         os_name = stdout.read().decode().strip()
 
-        if os_name == "Linux" or os_name == "Darwin":
+        if os_name in ('Linux', 'Darwin'):
             self.__path = self.DEFAULT_PATH
             self.__ssh = self.DEFAULT_SSH
 
@@ -50,15 +51,15 @@ class ConexionSFTP:
         sftp_client = ssh_client.open_sftp()
         return sftp_client
 
-    def enviar_archivo(self, directorio_arch: str) -> None:
-        arch_local = directorio_arch
-        arch_remoto = self.__path + "/archivotest"
+    def enviar_archivo(self, arch_local: str) -> None:
+        arch_local_re = re.search(r'^\\(.+\\)*(.+)\.(.+)$' , arch_local)
+        arch_local_nombre = arch_local_re[2] + arch_local_re[3] # type: ignore
+        arch_remoto = self.__path + "/" + arch_local_nombre
         self.__SFTP_CLIENT.put(arch_local, arch_remoto)
 
-    def descargar_archivo(self, directorio_local: str) -> None:
-        arch_local = directorio_local
-        arch_remoto = self.__path + "/archivotest"
-        self.__SFTP_CLIENT.get(arch_remoto, arch_local)
+    def descargar_archivo(self, arch_remoto_nombre: str) -> None:
+        arch_remoto = self.__path + "/" + arch_remoto_nombre
+        self.__SFTP_CLIENT.get(arch_remoto, self.__path)
 
     def listar_archivos(self) -> list[str]:
         archivos = self.__SFTP_CLIENT.listdir(self.__path)
