@@ -6,52 +6,39 @@ import paramiko
 class ConexionSFTP:
     DEFAULT_PORT = 22
 
-    DEFAULT_PATH_WINDOWS = 'C:/SFTPImplement'
     DEFAULT_PATH = '/SFTPImplement'
-    DEFAULT_SSH_WINDOWS = 'C:/.ssh/known_hosts'
     DEFAULT_SSH = '/.ssh/known_hosts'
 
-    # las variables de windows estan en desuso.
-    #FUFKCUFKCUFKCUFKC UFKC ODIO A MICROSOFT. EMPRESA DE MIERDDDAAaA
-
     def __init__(
-            self, hostname: str, username: str, password: str,
+            self, localusername: str, hostname: str, username: str, password: str,
             port: int=DEFAULT_PORT
     ):
+        self.__LOCAL_USERNAME = localusername
         self.__HOSTNAME = hostname
         self.__PORT = port
         self.__USERNAME = username
         self.__PASSWORD = password
 
+        self.__path = f'/home/{self.__USERNAME}{self.DEFAULT_PATH}'
+        self.__path_local = f'/home/{self.__LOCAL_USERNAME}{self.DEFAULT_PATH}'
+
         # clientes
-        # self.__ssh = self.DEFAULT_SSH
         self.__ssh_client = self.__init_ssh_client()
         self.__sftp_client = self.__init_sftp_client(self.__ssh_client)
-
-        # self.__detect_os()
-        self.__path = f'/home/{self.__USERNAME}{self.DEFAULT_PATH}'
-        self.__path_local = f'~/SFTPImplement'
 
     def __del__(self):
         self.__sftp_client.close()
         self.__ssh_client.close()
 
-    def __detect_os(self) -> None:
-        _, stdout, _ = self.__ssh_client.exec_command('uname -s')
-        os_name = stdout.read().decode().strip()
-
-        if os_name in ('Linux', 'Darwin'):
-            self.__path = self.DEFAULT_PATH
-
     def __init_ssh_client(self) -> paramiko.SSHClient:
         ssh_client = paramiko.SSHClient()
-        # ssh_client.load_system_host_keys(self.__ssh)
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh_client.connect(self.__HOSTNAME, self.__PORT, self.__USERNAME, self.__PASSWORD)
         return ssh_client
 
     def __init_sftp_client(self, ssh_client: paramiko.SSHClient) -> paramiko.SFTPClient:
         sftp_client = ssh_client.open_sftp()
+        sftp_client.mkdir(self.__path)
         return sftp_client
 
     def enviar_archivo(self, arch_local: str) -> None:
