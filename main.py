@@ -32,16 +32,18 @@ class ConexionSFTP:
         sftp_client = ssh_client.open_sftp()
         return sftp_client
 
+
     def enviar_archivo(self, directorio_arch: str) -> None:
         arch_local = directorio_arch
         arch_remoto = (self.__DIRECTORY + "/archivotest")
         self.__SFTP_CLIENT.put(arch_local, arch_remoto)
 
+
     def descargar_archivo(self, directorio_local: str) -> None:
         arch_local = directorio_local
         arch_remoto = (self.__DIRECTORY + "/archivotest")
         self.__SFTP_CLIENT.get(arch_remoto, arch_local)
-                                                                                                                                                                                   
+
     def listar_archivos(self) -> list[str]:
         archivos = self.__SFTP_CLIENT.listdir(self.__DIRECTORY)
         return archivos
