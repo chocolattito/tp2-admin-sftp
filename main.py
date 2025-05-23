@@ -7,7 +7,6 @@ class ConexionSFTP:
     DEFAULT_PORT = 22
 
     DEFAULT_PATH = '/SFTPImplement'
-    DEFAULT_SSH = '/.ssh/known_hosts'
 
     def __init__(
             self, localusername: str, hostname: str, username: str, password: str,
