@@ -30,6 +30,7 @@ class ConexionSFTP:
 
         # self.__detect_os()
         self.__path = f'/home/{self.__USERNAME}{self.DEFAULT_PATH}'
+        self.__path_local = f'~/SFTPImplement'
 
     def __del__(self):
         self.__sftp_client.close()
@@ -59,11 +60,11 @@ class ConexionSFTP:
         arch_remoto = self.__path + "/" + arch_local_nombre
         self.__sftp_client.put(arch_local, arch_remoto)
 
-    def descargar_archivo(self, arch_remoto_nombre: str, test_ruta_local: str) -> None:
+    def descargar_archivo(self, arch_remoto_nombre: str) -> None:
         arch_remoto = self.__path + "/" + arch_remoto_nombre
-        #arch_remoto = arch_remoto_nombre
-        self.__sftp_client.get(arch_remoto, test_ruta_local)
+        arch_local = self.__path_local + "/" + arch_remoto_nombre
+        self.__sftp_client.get(arch_remoto, arch_local)
 
-    def listar_archivos(self, dirtest) -> list[str]:
-        archivos = self.__sftp_client.listdir(dirtest)
+    def listar_archivos(self) -> list[str]:
+        archivos = self.__sftp_client.listdir(self.__path)
         return archivos
