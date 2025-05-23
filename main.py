@@ -43,7 +43,7 @@ class ConexionSFTP:
 
     def enviar_archivo(self, arch_local: str) -> None:
         arch_local_re = re.search(r'^/(.+/)*(.+)\.(.+)$' , arch_local)
-        arch_local_nombre = f"{arch_local_re[2]}{arch_local_re[3]}"
+        arch_local_nombre = f"{arch_local_re[2]}.{arch_local_re[3]}"
         arch_remoto = self.__path + "/" + arch_local_nombre
         self.__sftp_client.put(arch_local, arch_remoto)
 
