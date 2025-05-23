@@ -1,4 +1,4 @@
-# Implementación SFTP - C1 TP2 Adm. de Sistemas y Redes
+# Implementación SFTP - C1 TP2 Admin. de Sistemas y Redes
 Proyecto de implementación del protocolo SFTP (SSH File Transfer Protocol) para el segundo trabajo práctico de primer cuatrimestre en Administración de Sistemas y Redes.
 
 Desarrollado por Sebastian Daniel Marcos y Tomas Valentin Muruchi, 6°AO.
