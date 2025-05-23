@@ -7,9 +7,9 @@ class ConexionSFTP:
     DEFAULT_PORT = 22
 
     DEFAULT_PATH_WINDOWS = 'C:/SFTPImplement'
-    DEFAULT_PATH = '~/SFTPImplement'
+    DEFAULT_PATH = '/SFTPImplement'
     DEFAULT_SSH_WINDOWS = 'C:/.ssh/known_hosts'
-    DEFAULT_SSH = '~/.ssh/known_hosts'
+    DEFAULT_SSH = '/.ssh/known_hosts'
 
     # las variables de windows estan en desuso.
     #FUFKCUFKCUFKCUFKC UFKC ODIO A MICROSOFT. EMPRESA DE MIERDDDAAaA
@@ -28,7 +28,8 @@ class ConexionSFTP:
         self.__ssh_client = self.__init_ssh_client()
         self.__sftp_client = self.__init_sftp_client(self.__ssh_client)
 
-        self.__detect_os()
+        # self.__detect_os()
+        self.__path = f'/home/{self.__USERNAME}{self.DEFAULT_PATH}'
 
     def __del__(self):
         self.__sftp_client.close()
@@ -59,8 +60,8 @@ class ConexionSFTP:
         self.__sftp_client.put(arch_local, arch_remoto)
 
     def descargar_archivo(self, arch_remoto_nombre: str, test_ruta_local: str) -> None:
-        # arch_remoto = self.__path + "/" + arch_remoto_nombre
-        arch_remoto = arch_remoto_nombre
+        arch_remoto = self.__path + "/" + arch_remoto_nombre
+        #arch_remoto = arch_remoto_nombre
         self.__sftp_client.get(arch_remoto, test_ruta_local)
 
     def listar_archivos(self, dirtest) -> list[str]:
