@@ -54,3 +54,10 @@ class ConexionSFTP:
     def listar_archivos(self) -> list[str]:
         archivos = self.__sftp_client.listdir(self.__path)
         return archivos
+
+    def borrar_archivo(self, arch_remoto_nombre: str, confirmar: bool = False) -> None:
+        if not confirmar:
+            raise ValueError("Se requiere confirmación para eliminar el archivo")
+
+        arch_remoto = self.__path + "/" + arch_remoto_nombre
+        self.__sftp_client.remove(arch_remoto)
