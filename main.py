@@ -38,12 +38,12 @@ class ConexionSFTP:
 
     def __init_sftp_client(self, ssh_client: paramiko.SSHClient) -> paramiko.SFTPClient:
         sftp_client = ssh_client.open_sftp()
-        sftp_client.mkdir(self.__path)
+        #sftp_client.mkdir(self.__path)
         return sftp_client
 
     def enviar_archivo(self, arch_local: str) -> None:
-        arch_local_re = re.search(r'^\\(.+\\)*(.+)\.(.+)$' , arch_local)
-        arch_local_nombre = arch_local_re[2] + arch_local_re[3] # type: ignore
+        arch_local_re = re.search(r'^/(.+/)*(.+)\.(.+)$' , arch_local)
+        arch_local_nombre = f"{arch_local_re[2]}{arch_local_re[3]}"
         arch_remoto = self.__path + "/" + arch_local_nombre
         self.__sftp_client.put(arch_local, arch_remoto)
 
