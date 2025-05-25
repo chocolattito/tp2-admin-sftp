@@ -1,15 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Implementacion SFTP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>Implementación SFTP - Conexión</title>
 </head>
-<body>
-    <h1>Transferir archivo</h1>
-    <form action="/enviar_archivo" method="post">
-        <input type="file" name="archivo" value="Subir archivo">
-        <input type="submit" value="Enviar archivo">
-    </form>
+<body class="bg-light"> 
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm"> 
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <a class="navbar-brand" href="{{ url_for('index') }}">
+                        <i class="bi bi-cloud-arrow-up-fill me-2"></i> SFTP Connect
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card p-4 mb-4 shadow-sm border-0"> 
+                    <h2 class="text-center mb-4 text-primary">Establecer Conexión SFTP</h2>
+                    <form action="{{ url_for('index') }}" method="post">
+                        <div class="mb-3">
+                            <label for="hostname" class="form-label fw-semibold">Hostname:</label>
+                            <input type="text" class="form-control" id="hostname" name="hostname" required placeholder="ej: motomoto">
+                        </div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label fw-semibold">Username:</label>
+                            <input type="text" class="form-control" id="username" name="username" required placeholder="ej: Morito">
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-semibold">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password" required placeholder="••••••••">
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-lightning-charge me-2"></i> Conectar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="list-group list-group-flush" style="list-style: none;">
+                    {% for category, message in messages %}
+                        <li class="alert alert-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                {% endwith %}
+
+                {% if message %}
+                    <div class="alert {{ 'alert-success' if 'Conexión establecida' in message else 'alert-danger' }} text-center mb-4 fade show" role="alert">
+                        {{ message }}
+                    </div>
+                {% endif %}
+
+                {% if error %}
+                    <div class="alert alert-danger text-center mb-4 fade show" role="alert">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                {% if conexion %}
+                    <div class="card p-4 mb-4 shadow-sm border-0">
+                        <h3 class="mb-3 text-success">
+                            <i class="bi bi-check-circle-fill me-2"></i> Conexión Exitosa
+                        </h3>
+                        <p class="mb-2"><strong>Hostname:</strong> <span class="text-info">{{ conexion.hostname }}</span></p>
+                        <p class="mb-2"><strong>Usuario:</strong> <span class="text-info">{{ conexion.username }}</span></p>
+                        </div>
+
+                    <div class="card p-4 shadow-sm border-0">
+                        <h3 class="mb-3 text-secondary">Acciones SFTP Disponibles:</h3>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('enviar_archivo') }}" class="text-decoration-none text-dark fw-semibold d-flex align-items-center w-100 py-2">
+                                    <i class="bi bi-upload me-3 fs-5"></i> Enviar Archivo
+                                </a>
+                                <i class="bi bi-chevron-right text-muted"></i>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('listar_archivos') }}" class="text-decoration-none text-dark fw-semibold d-flex align-items-center w-100 py-2">
+                                    <i class="bi bi-folder-fill me-3 fs-5"></i> Listar Archivos
+                                </a>
+                                <i class="bi bi-chevron-right text-muted"></i>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('descargar_archivo') }}" class="text-decoration-none text-dark fw-semibold d-flex align-items-center w-100 py-2">
+                                    <i class="bi bi-download me-3 fs-5"></i> Descargar Archivo
+                                </a>
+                                <i class="bi bi-chevron-right text-muted"></i>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('borrar_archivo') }}" class="text-decoration-none text-dark fw-semibold d-flex align-items-center w-100 py-2">
+                                    <i class="bi bi-trash-fill me-3 fs-5"></i> Borrar Archivo
+                                </a>
+                                <i class="bi bi-chevron-right text-muted"></i>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('desconectar') }}" class="text-decoration-none text-danger fw-semibold d-flex align-items-center w-100 py-2">
+                                    <i class="bi bi-x-circle-fill me-3 fs-5"></i> Desconectar Conexión
+                                </a>
+                                <i class="bi bi-chevron-right text-muted"></i>
+                            </li>
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
 </body>
 </html>
