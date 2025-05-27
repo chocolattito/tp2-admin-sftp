@@ -17,7 +17,7 @@ class ConexionSFTP:
         return cls._instance
 
     def __init__(
-            self, data: dict[str, str]=None, port: int=DEFAULT_PORT
+            self, data: dict[str, str]=None, port: int=DEFAULT_PORT # type: ignore
     ):
         if self._connected is False:
             self.__local_username = data['localname']
@@ -26,8 +26,8 @@ class ConexionSFTP:
             self.__password = data['password']
             self.__port = port
 
-            self.__path = f'/Users/{self.__username}{self.DEFAULT_PATH}'
-            self.__path_local = f'/home/{self.__local_username}{self.DEFAULT_PATH}'
+            self.__path = f'/home/{self.__username}{self.DEFAULT_PATH}'
+            self.__path_local = f'/Users/{self.__local_username}{self.DEFAULT_PATH}'
 
             # clientes
             self.__ssh_client = self.__init_ssh_client()
@@ -65,9 +65,6 @@ class ConexionSFTP:
         archivos = self.__sftp_client.listdir(self.__path)
         return archivos
 
-    def borrar_archivo(self, arch_remoto_nombre: str, confirmar: bool = False) -> None:
-        if not confirmar:
-            raise ValueError("Se requiere confirmación para eliminar el archivo")
-
+    def borrar_archivo(self, arch_remoto_nombre: str) -> None:
         arch_remoto = self.__path + "/" + arch_remoto_nombre
         self.__sftp_client.remove(arch_remoto)

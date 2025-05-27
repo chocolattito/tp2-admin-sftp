@@ -31,11 +31,13 @@ def index():
     """
 
     if request.method == 'POST':
+        localname = request.form['localname']
         hostname = request.form['hostname']
         username = request.form['username']
         password = request.form['password']
 
         session['conexion_info'] = {
+            'localname': localname,
             'hostname': hostname,
             'username': username,
             'password': password 
@@ -92,7 +94,6 @@ def listar_archivos():
     """
 
     conexion_info = session.get('conexion_info')
-    #conexion_object, conexion_info = get_sftp_client()
     if conexion_info is  None:
         return redirect(url_for('index'))
 
@@ -106,19 +107,19 @@ def descargar_archivo():
     El usuario descarga un archivo del servidor.
     """
 
-    if request.method == 'POST':
+    conexion_info = session.get('conexion_info')
+    if conexion_info is  None:
+        return redirect(url_for('index'))
 
+    if request.method == 'POST':
         try:
-            ConexionSFTP().descargar_archivo(archivo.filename)
-            flash(f"Archivo '{archivo.filename}' descargado con éxito.", "success")
+            archivo = request.form["archivo_a_descargar"]
+            ConexionSFTP().descargar_archivo(archivo)
+            flash(f"Archivo '{archivo}' descargado con éxito.", "success")
         except Exception as e:
             print(e)
             flash("Error al descargar el archivo", "danger")
 
-        return redirect(url_for('index'))
-
-    conexion_info = session.get('conexion_info')
-    if conexion_info is  None:
         return redirect(url_for('index'))
 
     archivos = ConexionSFTP().listar_archivos()
@@ -136,10 +137,17 @@ def borrar_archivo():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        flash("Archivo borrado correctamente.", "success")
-        return redirect(url_for('index'))
+        try:
+            archivo = request.form["archivo_a_borrar"]
+            ConexionSFTP().borrar_archivo(archivo)
+            flash(f"Archivo '{archivo}' borrado con éxito.", "success")
+        except Exception as e:
+            print(e)
+            flash("Error al descargar el archivo", "danger")
 
-    return render_template('borrar.html', archivos=conexion_object.listar_archivos())
+    archivos = ConexionSFTP().listar_archivos()
+
+    return render_template('borrar.html', archivos=archivos)
 
 @app.route('/desconectar', methods=['GET', 'POST'])
 def desconectar():
