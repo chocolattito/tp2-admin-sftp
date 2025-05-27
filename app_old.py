@@ -1,7 +1,5 @@
-# pylint:disable=C0116,C0115,C0114,C0103,W0718
-
 from flask import Flask, request, render_template, redirect, url_for, session, flash
-from conexion_sftp import ConexionSFTP
+from conexionsftp import ConexionSFTP
 
 app = Flask(__name__)
 app.secret_key = "clave_super_secreta"
@@ -31,33 +29,35 @@ def index():
     """
 
     if request.method == 'POST':
+        localname = request.form['localname']
         hostname = request.form['hostname']
         username = request.form['username']
         password = request.form['password']
 
         session['conexion_info'] = {
+            'localname': localname,
             'hostname': hostname,
             'username': username,
             'password': password 
         }
 
         try:
-            ConexionSFTP(session['conexion_info'])
+            conexion = ConexionSFTP(localname, hostname, username, password)
+            session['conexion_object'] = conexion # Almacenar el objeto completo
 
             flash("Conexión SFTP establecida con éxito.", "success")
             return redirect(url_for('index')) # Redirigir para evitar reenvío de formulario
         except Exception as e:
-            print(e)
-
             # Si hay un error, limpiar cualquier información de conexión fallida
-            session['conexion_info'] = None
-            session['archivos_remotos'] = None
-            flash("Error al intentar establecer la conexión:", "danger")
+            session.pop('conexion_info', None)
+            session.pop('conexion_object', None)
+            session.pop('archivos_remotos', None)
+            flash(f"Error al intentar establecer la conexión:", "danger")
             return redirect(url_for('index'))
 
     conexion_data = session.get('conexion_info')
-
-    if conexion_data is not None:
+    
+    if 'conexion_object' in session:
         return render_template('index.html', conexion=conexion_data, archivos=session.get('archivos_remotos', []))
     else:
         return render_template('index.html', conexion=None) # Mostrar el formulario de conexión
@@ -68,19 +68,18 @@ def enviar_archivo():
     El usuario utilizando un formulario, sube un archivo dando la ruta y luego se manda al servidor.
     """
 
-    conexion_info = session.get('conexion_info')
-    if conexion_info is  None:
+    conexion_object, conexion_info = get_sftp_client()
+    if not conexion_object:
         return redirect(url_for('index'))
-
+    
     if request.method == 'POST':
         archivo = request.files.get("archivo")
 
         try:
-            ConexionSFTP().enviar_archivo(archivo.filename)
+            conexion_object.enviar_archivo(archivo.filename)
             flash(f"Archivo '{archivo.filename}' enviado con éxito.", "success")
         except Exception as e:
-            print(e)
-            flash("Error al enviar el archivo", "danger")
+            flash(f"Error al enviar el archivo", "danger")
 
         return redirect(url_for('index'))
     return render_template('enviar_archivo.html')
@@ -91,14 +90,11 @@ def listar_archivos():
     El usuario vizualiza la lista de archivos en el servidor.
     """
 
-    conexion_info = session.get('conexion_info')
-    #conexion_object, conexion_info = get_sftp_client()
-    if conexion_info is  None:
+    conexion_object, conexion_info = get_sftp_client()
+    if not conexion_object:
         return redirect(url_for('index'))
 
-    archivos = ConexionSFTP().listar_archivos()
-
-    return render_template('listar_archivos.html', archivos=archivos)
+    return render_template('listar_archivos.html', archivos=conexion_object.listar_archivos())
 
 @app.route('/descargar_archivo', methods=['GET', 'POST'])
 def descargar_archivo():
@@ -109,21 +105,14 @@ def descargar_archivo():
     if request.method == 'POST':
 
         try:
-            ConexionSFTP().descargar_archivo(archivo.filename)
+            conexion_object.descargar_archivo(archivo.filename)
             flash(f"Archivo '{archivo.filename}' descargado con éxito.", "success")
         except Exception as e:
-            print(e)
-            flash("Error al descargar el archivo", "danger")
+            flash(f"Error al descargar el archivo", "danger")
 
         return redirect(url_for('index'))
 
-    conexion_info = session.get('conexion_info')
-    if conexion_info is  None:
-        return redirect(url_for('index'))
-
-    archivos = ConexionSFTP().listar_archivos()
-
-    return render_template('descarga.html', archivos=archivos)
+    return render_template('descarga.html', archivos=conexion_object.listar_archivos())
 
 @app.route('/borrar_archivo', methods=['GET', 'POST'])
 def borrar_archivo():
@@ -131,14 +120,14 @@ def borrar_archivo():
     El usuario borra un archivo del servidor.
     """
 
-    conexion_info = session.get('conexion_info')
-    if conexion_info is  None:
+    conexion_object, conexion_info = get_sftp_client()
+    if not conexion_object:
         return redirect(url_for('index'))
 
     if request.method == 'POST':
         flash("Archivo borrado correctamente.", "success")
         return redirect(url_for('index'))
-
+    
     return render_template('borrar.html', archivos=conexion_object.listar_archivos())
 
 @app.route('/desconectar', methods=['GET', 'POST'])

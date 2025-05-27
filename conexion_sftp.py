@@ -4,26 +4,36 @@ import re
 import paramiko
 
 class ConexionSFTP:
+    _instance = None
+    _connected = False
+
     DEFAULT_PORT = 22
 
     DEFAULT_PATH = '/SFTPImplement'
 
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
     def __init__(
-            self, localusername: str, hostname: str, username: str, password: str,
-            port: int=DEFAULT_PORT
+            self, data: dict[str, str]=None, port: int=DEFAULT_PORT
     ):
-        self.__LOCAL_USERNAME = localusername
-        self.__HOSTNAME = hostname
-        self.__PORT = port
-        self.__USERNAME = username
-        self.__PASSWORD = password
+        if self._connected is False:
+            self.__local_username = data['localname']
+            self.__hostname = data['hostname']
+            self.__username = data['username']
+            self.__password = data['password']
+            self.__port = port
 
-        self.__path = f'/home/{self.__USERNAME}{self.DEFAULT_PATH}'
-        self.__path_local = f'/home/{self.__LOCAL_USERNAME}{self.DEFAULT_PATH}'
+            self.__path = f'/Users/{self.__username}{self.DEFAULT_PATH}'
+            self.__path_local = f'/home/{self.__local_username}{self.DEFAULT_PATH}'
 
-        # clientes
-        self.__ssh_client = self.__init_ssh_client()
-        self.__sftp_client = self.__init_sftp_client(self.__ssh_client)
+            # clientes
+            self.__ssh_client = self.__init_ssh_client()
+            self.__sftp_client = self.__init_sftp_client(self.__ssh_client)
+
+            self._connected = True
 
     def __del__(self):
         self.__sftp_client.close()
@@ -32,7 +42,7 @@ class ConexionSFTP:
     def __init_ssh_client(self) -> paramiko.SSHClient:
         ssh_client = paramiko.SSHClient()
         ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh_client.connect(self.__HOSTNAME, self.__PORT, self.__USERNAME, self.__PASSWORD)
+        ssh_client.connect(self.__hostname, self.__port, self.__username, self.__password)
         return ssh_client
 
     def __init_sftp_client(self, ssh_client: paramiko.SSHClient) -> paramiko.SFTPClient:
