@@ -33,20 +33,14 @@ def index():
         username = request.form['username']
         password = request.form['password']
 
-        # Almacenar la información de conexión en la sesión (sin la contraseña por seguridad,
-        # aunque para propósitos de demostración se mantiene para recrear el objeto)
         session['conexion_info'] = {
             'hostname': hostname,
             'username': username,
-            # No guardar la contraseña en la sesión si no es estrictamente necesario
-            # o si se puede recrear el objeto de conexión de otra manera segura.
-            # Para este ejemplo, la mantenemos para simplificar la recreación del objeto.
             'password': password 
         }
 
-        # Intentar establecer la conexión SFTP
         try:
-            # Crear una nueva instancia de ConexionSFTP
+
             conexion = ConexionSFTP(hostname, username, password)
             conexion.conectar() # Intentar conectar
 
@@ -62,7 +56,6 @@ def index():
             flash(f"Error al intentar establecer la conexión:", "danger")
             return redirect(url_for('index'))
 
-    # Para solicitudes GET o después de un POST exitoso/fallido
     conexion_data = session.get('conexion_info')
     
     if 'conexion_object' in session:
