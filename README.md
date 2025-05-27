@@ -3,6 +3,7 @@ Proyecto de investigación y implementación del protocolo SFTP (SSH File Transf
 
 Desarrollado por **Sebastian Daniel Marcos** y **Tomas Valentin Muruchi**, 6°AO.
 ## Requerimientos y dependencias
+Por simplicidad, el software fue pensado para ser utilizado entre dos sistemas Linux, uno que actua como cliente y el otro como servidor.
 ### Virtual environment
 (claramente... :P)
 ```
