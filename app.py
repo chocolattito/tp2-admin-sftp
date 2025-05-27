@@ -1,68 +1,158 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
-from main import ConexionSFTP  # Asegúrate de que esto no cause errores si lo estás simulando
+from main import ConexionSFTP
 
 app = Flask(__name__)
 app.secret_key = "clave_super_secreta"
 
+
+def get_sftp_client():
+    """
+    Función auxiliar para obtener la instancia de ConexionSFTP desde la sesión.
+    Si no existe o la conexión se perdió, redirige al inicio. 
+    Sirve para evitar de que se pueda acceder a las funciones sin tener alguna conexionl.
+    """
+    conexion_info = session.get('conexion_info')
+    conexion_object = session.get('conexion_object')
+
+    if not conexion_info or not conexion_object:
+        flash("No hay conexión SFTP activa. Por favor, conéctate primero.", "warning")
+        return None, None # Retorna None para que la ruta pueda redirigir
+
+    return conexion_object, conexion_info
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    """
+    Maneja la conexión SFTP. Si es un POST, intenta conectar;
+    si es GET, muestra el formulario de conexión o las acciones si ya está conectado.
+    """
+
     if request.method == 'POST':
-        conexion_info = {
-            'hostname': request.form['hostname'],
-            'username': request.form['username'],
-            'password': request.form['password']
+        hostname = request.form['hostname']
+        username = request.form['username']
+        password = request.form['password']
+
+        # Almacenar la información de conexión en la sesión (sin la contraseña por seguridad,
+        # aunque para propósitos de demostración se mantiene para recrear el objeto)
+        session['conexion_info'] = {
+            'hostname': hostname,
+            'username': username,
+            # No guardar la contraseña en la sesión si no es estrictamente necesario
+            # o si se puede recrear el objeto de conexión de otra manera segura.
+            # Para este ejemplo, la mantenemos para simplificar la recreación del objeto.
+            'password': password 
         }
-        session['conexion_info'] = conexion_info
 
-        # Simulación de éxito o error:
-        if conexion_info['hostname']:  # Simulamos que si hay host, se conecta
-            flash("Conexión establecida con éxito.", "success")
-        else:
-            flash("Error en la conexión, intente de nuevo.", "error")
+        # Intentar establecer la conexión SFTP
+        try:
+            # Crear una nueva instancia de ConexionSFTP
+            conexion = ConexionSFTP(hostname, username, password)
+            conexion.conectar() # Intentar conectar
 
-        return redirect(url_for('index'))
+            session['conexion_object'] = conexion # Almacenar el objeto completo
 
+            flash("Conexión SFTP establecida con éxito.", "success")
+            return redirect(url_for('index')) # Redirigir para evitar reenvío de formulario
+        except Exception as e:
+            # Si hay un error, limpiar cualquier información de conexión fallida
+            session.pop('conexion_info', None)
+            session.pop('conexion_object', None)
+            session.pop('archivos_remotos', None)
+            flash(f"Error al intentar establecer la conexión:", "danger")
+            return redirect(url_for('index'))
+
+    # Para solicitudes GET o después de un POST exitoso/fallido
     conexion_data = session.get('conexion_info')
-    return render_template('index.html', conexion=conexion_data)
+    
+    if 'conexion_object' in session:
+        return render_template('index.html', conexion=conexion_data, archivos=session.get('archivos_remotos', []))
+    else:
+        return render_template('index.html', conexion=None) # Mostrar el formulario de conexión
 
 @app.route('/enviar_archivo', methods=['GET', 'POST'])
 def enviar_archivo():
+    """
+    El usuario utilizando un formulario, sube un archivo dando la ruta y luego se manda al servidor.
+    """
+
+    conexion_object, conexion_info = get_sftp_client()
+    if not conexion_object:
+        return redirect(url_for('index'))
+    
     if request.method == 'POST':
         archivo = request.files.get("archivo")
-        if archivo and archivo.filename:
+
+        try:
+            conexion_object.enviar_archivo(archivo.filename)
             flash(f"Archivo '{archivo.filename}' enviado con éxito.", "success")
-        else:
-            flash("No se seleccionó ningún archivo.", "error")
+        except Exception as e:
+            flash(f"Error al enviar el archivo", "danger")
+
         return redirect(url_for('index'))
     return render_template('enviar_archivo.html')
 
 @app.route('/listar_archivos', methods=['GET', 'POST'])
 def listar_archivos():
-    archivos = session.get('archivos', ["archivo1.txt", "archivo2.pdf"])  # Simulados
-    if request.method == 'POST':
-        flash("Archivos listados correctamente.", "success")
-    return render_template('listar_archivos.html', archivos=archivos)
+    """
+    El usuario vizualiza la lista de archivos en el servidor.
+    """
+
+    conexion_object, conexion_info = get_sftp_client()
+    if not conexion_object:
+        return redirect(url_for('index'))
+
+    return render_template('listar_archivos.html', archivos=conexion_object.listar_archivos())
 
 @app.route('/descargar_archivo', methods=['GET', 'POST'])
 def descargar_archivo():
+    """ 
+    El usuario descarga un archivo del servidor.
+    """
+
     if request.method == 'POST':
-        flash("Archivo descargado con éxito.", "success")
+
+        try:
+            conexion_object.descargar_archivo(archivo.filename)
+            flash(f"Archivo '{archivo.filename}' descargado con éxito.", "success")
+        except Exception as e:
+            flash(f"Error al descargar el archivo", "danger")
+
         return redirect(url_for('index'))
-    archivos = session.get('archivos', ["archivo1.txt", "archivo2.pdf"])  # Simulados
-    return render_template('descarga.html', archivos=archivos)
+
+    return render_template('descarga.html', archivos=conexion_object.listar_archivos())
 
 @app.route('/borrar_archivo', methods=['GET', 'POST'])
 def borrar_archivo():
+    """ 
+    El usuario borra un archivo del servidor.
+    """
+
+    conexion_object, conexion_info = get_sftp_client()
+    if not conexion_object:
+        return redirect(url_for('index'))
+
     if request.method == 'POST':
         flash("Archivo borrado correctamente.", "success")
         return redirect(url_for('index'))
-    archivos = session.get('archivos', ["archivo1.txt", "archivo2.pdf"])  # Simulados
-    return render_template('borrar.html', archivos=archivos)
+    
+    return render_template('borrar.html', archivos=conexion_object.listar_archivos())
 
 @app.route('/desconectar', methods=['GET', 'POST'])
 def desconectar():
-    session.clear()
-    flash("Sesión cerrada correctamente.", "info")
+    """ 
+    El usuario desconecta de la conexión SFTP.
+    """
+
+    conexion_object = session.pop('conexion_object', None)
+    if conexion_object:
+        try:
+            conexion_object.desconectar() # Llamar al método desconectar del objeto SFTP
+        except Exception as e:
+            print(f"Error al cerrar la conexión SFTP") # Imprimir en consola, no flashear al usuario
+    
+    session.clear() # Limpiar toda la sesión
+    flash("Sesión SFTP cerrada correctamente.", "info")
     return redirect(url_for('index'))
 
 if __name__ == "__main__":
