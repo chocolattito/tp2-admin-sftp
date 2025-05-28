@@ -27,7 +27,7 @@ class ConexionSFTP:
             self.__port = port
 
             self.__path = f'/home/{self.__username}{self.DEFAULT_PATH}'
-            self.__path_local = f'/Users/{self.__local_username}{self.DEFAULT_PATH}'
+            self.__path_local = f'/home/{self.__local_username}{self.DEFAULT_PATH}'
 
             # clientes
             self.__ssh_client = self.__init_ssh_client()

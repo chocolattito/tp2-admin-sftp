@@ -76,9 +76,10 @@ def enviar_archivo():
 
     if request.method == 'POST':
         archivo = request.files.get("archivo")
+        path = archivo.filename
 
         try:
-            ConexionSFTP().enviar_archivo(archivo.filename)
+            ConexionSFTP().enviar_archivo(path)
             flash(f"Archivo '{archivo.filename}' enviado con éxito.", "success")
         except Exception as e:
             print(e)
