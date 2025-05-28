@@ -19,6 +19,9 @@ class ConexionSFTP:
     def __init__(
             self, data: dict[str, str]=None, port: int=DEFAULT_PORT # type: ignore
     ):
+        if self._connected is False and data is None:
+            raise ValueError("Introduzca los datos de conexión")
+
         if self._connected is False:
             self.__local_username = data['localname']
             self.__hostname = data['hostname']
@@ -36,6 +39,9 @@ class ConexionSFTP:
             self._connected = True
 
     def __del__(self):
+        self.__cerrar_conexiones()
+
+    def __cerrar_conexiones(self):
         self.__sftp_client.close()
         self.__ssh_client.close()
 
@@ -68,3 +74,8 @@ class ConexionSFTP:
     def borrar_archivo(self, arch_remoto_nombre: str) -> None:
         arch_remoto = self.__path + "/" + arch_remoto_nombre
         self.__sftp_client.remove(arch_remoto)
+
+    def desconectar(self) -> None:
+        if self._connected is True:
+            self.__cerrar_conexiones()
+            self._connected = False
