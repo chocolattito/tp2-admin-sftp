@@ -4,6 +4,17 @@ Proyecto de investigación y implementación del protocolo SFTP (SSH File Transf
 Desarrollado por **Sebastian Daniel Marcos** y **Tomas Valentin Muruchi**, 6°AO.
 ## Requerimientos y dependencias
 Por simplicidad, el software fue pensado para ser utilizado entre dos sistemas Linux, uno que actua como cliente y el otro como servidor.
+### Servidor (Debian/Ubuntu)
+#### Servidor SSH
+```
+sudo apt install openssh-server
+```
+```
+sudo systemctl enable ssh
+```
+```
+sudo systemctl start ssh
+```
 ### Cliente
 Requiere una instalación de Python en el sistema para funcionar.
 #### Virtual environment
@@ -29,14 +40,6 @@ Ejecuta el software de cliente. Una vez corriendo el software, estará disponibl
 ```
 py app.py
 ```
-### Servidor (Ubuntu)
-#### Servidor SSH
-```
-sudo apt install openssh-server
-```
-```
-sudo systemctl enable ssh
-```
-```
-sudo systemctl start ssh
-```
+Para realizar una conexión, deberá conocer el nombre de usuario del sistema cliente, la dirección IP del servidor y las credenciales de usuario del servidor.
+<img width="1343" alt="image" src="https://github.com/user-attachments/assets/b80c5b06-5f3c-4efb-8fbd-d39a20c1aced" />
+
