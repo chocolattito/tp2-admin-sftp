@@ -46,7 +46,7 @@ pip install flask
 #### Ejecución
 Ejecuta el software de cliente. Una vez corriendo el software, estará disponible en su IP local http://127.0.0.1:5000 donde deberá entrar con un navegador web.
 ```
-py app.py
+python3 app.py
 ```
 Para realizar una conexión, deberá conocer el nombre de usuario del sistema cliente, la dirección IP del servidor y las credenciales de usuario del servidor.
 <img width="1343" alt="image" src="https://github.com/user-attachments/assets/b80c5b06-5f3c-4efb-8fbd-d39a20c1aced" />
