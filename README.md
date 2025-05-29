@@ -7,7 +7,7 @@ Una demo de la implementación se puede ver [acá](https://drive.google.com/file
 ## Requerimientos y dependencias
 Por simplicidad, el software fue pensado para ser utilizado entre dos sistemas Linux, uno que actua como cliente y el otro como servidor.
 ### Prerequisitos cliente y servidor
-El software almacena archivos del lado cliente y servidor en un directorio "SFTPImplement" predefinido que debe ser creado manualmente y ubicado en el directorio "home" del usuario cliente y el usuario servidor.
+El software almacena archivos descargados del lado cliente y archivos subidos del lado servidor en un directorio predefinido "SFTPImplement" que debe ser creado manualmente y ubicado en el directorio "home" del usuario cliente y el usuario servidor.
 ```
 mkdir /home/[Nombre de usuario]/SFTPImplement
 ```
