@@ -6,6 +6,11 @@ Desarrollado por **Sebastian Daniel Marcos** y **Tomas Valentin Muruchi**, 6°AO
 Una demo de la implementación se puede ver [acá](https://drive.google.com/file/d/1ZdbkGGUDQnIWaGJ7soSX7IJJZhtFUgG7/view?usp=sharing).
 ## Requerimientos y dependencias
 Por simplicidad, el software fue pensado para ser utilizado entre dos sistemas Linux, uno que actua como cliente y el otro como servidor.
+### Prerequisitos cliente y servidor
+El software almacena archivos del lado cliente y servidor en un directorio "SFTPImplement" predefinido que debe ser creado manualmente y ubicado en el directorio "home" del usuario cliente y el usuario servidor.
+```
+mkdir /home/[Nombre de usuario]/SFTPImplement
+```
 ### Servidor (Debian/Ubuntu)
 Los siguientes comandos aplican para sistemas Debian, Ubuntu o derivados que utilicen el gestor de paquetes APT. La instalación y la activación del servidor SSH puede variar dependiendo de la distro de Linux que se utilice.
 #### Servidor SSH
