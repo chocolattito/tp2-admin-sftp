@@ -1,10 +1,11 @@
 # Protocolo SFTP - C1 TP2 Admin. de Sistemas y Redes
-Proyecto de investigación y implementación del protocolo SFTP (SSH File Transfer Protocol) para el segundo trabajo práctico de primer cuatrimestre en Administración de Sistemas y Redes.
+Proyecto de investigación e implementación del protocolo SFTP (SSH File Transfer Protocol) para el segundo trabajo práctico de primer cuatrimestre en Administración de Sistemas y Redes.
 
 Desarrollado por **Sebastian Daniel Marcos** y **Tomas Valentin Muruchi**, 6°AO.
 ## Requerimientos y dependencias
 Por simplicidad, el software fue pensado para ser utilizado entre dos sistemas Linux, uno que actua como cliente y el otro como servidor.
 ### Servidor (Debian/Ubuntu)
+Los siguientes comandos aplican para sistemas Debian, Ubuntu o derivados que utilicen el gestor de paquetes APT. La instalación y la activación del servidor SSH puede variar dependiendo de la distro de Linux que se utilice.
 #### Servidor SSH
 ```
 sudo apt install openssh-server
@@ -36,7 +37,7 @@ Framework ligero de frontend para la interacción del usuario final con el siste
 pip install flask
 ```
 #### Ejecución
-Ejecuta el software de cliente. Una vez corriendo el software, estará disponible en su IP local http://127.0.0.1:5000
+Ejecuta el software de cliente. Una vez corriendo el software, estará disponible en su IP local http://127.0.0.1:5000 donde deberá entrar con un navegador web.
 ```
 py app.py
 ```
