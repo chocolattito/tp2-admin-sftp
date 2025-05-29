@@ -2,6 +2,8 @@
 Proyecto de investigación e implementación del protocolo SFTP (SSH File Transfer Protocol) para el segundo trabajo práctico de primer cuatrimestre en Administración de Sistemas y Redes.
 
 Desarrollado por **Sebastian Daniel Marcos** y **Tomas Valentin Muruchi**, 6°AO.
+
+Una demo de la implementación se puede ver [acá](https://drive.google.com/file/d/1ZdbkGGUDQnIWaGJ7soSX7IJJZhtFUgG7/view?usp=sharing).
 ## Requerimientos y dependencias
 Por simplicidad, el software fue pensado para ser utilizado entre dos sistemas Linux, uno que actua como cliente y el otro como servidor.
 ### Servidor (Debian/Ubuntu)
