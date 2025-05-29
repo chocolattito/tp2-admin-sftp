@@ -30,20 +30,20 @@
                         <h2 class="text-center mb-4 text-primary">Establecer Conexión SFTP</h2>
                         <form action="{{ url_for('index') }}" method="post">
                             <div class="mb-3">
-                                <label for="localname" class="form-label fw-semibold">Local Name:</label>
-                                <input type="text" class="form-control" id="localname" name="localname" required placeholder="Kubuntu">
+                                <label for="localname" class="form-label fw-semibold">Nombre de usuario local:</label>
+                                <input type="text" class="form-control" id="localname" name="localname" required placeholder="Usuario de este sistema, ej: kubuntu">
                             </div>
                             <div class="mb-3">
                                 <label for="hostname" class="form-label fw-semibold">Hostname:</label>
-                                <input type="text" class="form-control" id="hostname" name="hostname" required placeholder="ej: motomoto">
+                                <input type="text" class="form-control" id="hostname" name="hostname" required placeholder="Dirección del servidor, ej: 192.1.2.345">
                             </div>
                             <div class="mb-3">
-                                <label for="username" class="form-label fw-semibold">Username:</label>
-                                <input type="text" class="form-control" id="username" name="username" required placeholder="ej: Morito">
+                                <label for="username" class="form-label fw-semibold">Nombre de usuario remoto:</label>
+                                <input type="text" class="form-control" id="username" name="username" required placeholder="Usuario del servidor, ej: arch">
                             </div>
                             <div class="mb-4">
-                                <label for="password" class="form-label fw-semibold">Password:</label>
-                                <input type="password" class="form-control" id="password" name="password" required placeholder="••••••••">
+                                <label for="password" class="form-label fw-semibold">Contraseña:</label>
+                                <input type="password" class="form-control" id="password" name="password" required placeholder="Contraseña del servidor, ej: •••••••• (muy útil lo se jaja)">
                             </div>
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary btn-lg">
