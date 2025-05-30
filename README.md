@@ -26,7 +26,7 @@ sudo systemctl start ssh
 ### Cliente
 Requiere una instalación de Python en el sistema para funcionar.
 #### Virtual environment
-(claramente... :P)
+Una vez clonado el repositorio, creá un virtual environment en su directorio para instalar las dependencias necesarias.
 ```
 python3 -m venv venv
 ```
@@ -44,7 +44,7 @@ Framework ligero de frontend para la interacción del usuario final con el siste
 pip install flask
 ```
 #### Ejecución
-Ejecuta el software de cliente. Una vez corriendo el software, estará disponible en su IP local http://127.0.0.1:5000 donde deberá entrar con un navegador web.
+Ejecutá el software de cliente. Una vez corriendo el software, estará disponible en su IP local http://127.0.0.1:5000 donde deberá entrar con un navegador web.
 ```
 python3 app.py
 ```
